@@ -20,13 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Jackie
@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping("/service")
 public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
   
-  protected static final Logger LOGGER = LoggerFactory.getLogger(ModelEditorJsonRestResource.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ModelEditorJsonRestResource.class);
   
   @Autowired
   private RepositoryService repositoryService;
@@ -43,7 +43,7 @@ public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
   @Autowired
   private ObjectMapper objectMapper;
   
-  @RequestMapping(value="/model/{modelId}/json", method = RequestMethod.GET, produces = "application/json")
+  @GetMapping(value="/model/{modelId}/json", produces = "application/json")
   public ObjectNode getEditorJson(@PathVariable String modelId) {
     ObjectNode modelNode = null;
     
@@ -59,10 +59,10 @@ public class ModelEditorJsonRestResource implements ModelDataJsonConstants {
         }
         modelNode.put(MODEL_ID, model.getId());
         ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(
-            new String(repositoryService.getModelEditorSource(model.getId()), "utf-8"));
-        modelNode.put("model", editorJsonNode);
+            new String(repositoryService.getModelEditorSource(model.getId()), StandardCharsets.UTF_8));
+        modelNode.set("model", editorJsonNode);
         
-      } catch (Exception e) {
+      } catch (IOException e) {
         LOGGER.error("Error creating model JSON", e);
         throw new ActivitiException("Error creating model JSON", e);
       }

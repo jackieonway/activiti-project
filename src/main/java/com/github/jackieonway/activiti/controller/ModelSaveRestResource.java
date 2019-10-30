@@ -13,6 +13,7 @@
 package com.github.jackieonway.activiti.controller;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -22,6 +23,7 @@ import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.ActivitiException;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Model;
+import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
@@ -50,10 +52,10 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
 
   @Autowired
   private ObjectMapper objectMapper;
-  @RequestMapping(value="/model/{modelId}/save", method = RequestMethod.PUT)
+  @PutMapping(value="/model/{modelId}/save")
   @ResponseStatus(value = HttpStatus.OK)
   public void saveModel(@PathVariable String modelId, @RequestParam("name") String name,
-                        @RequestParam("json_xml") String json_xml, @RequestParam("svg_xml") String svg_xml,
+                        @RequestParam("json_xml") String jsonXml, @RequestParam("svg_xml") String svgXml,
                         @RequestParam("description") String description) {
     try {
       Model model = repositoryService.getModel(modelId);
@@ -63,8 +65,8 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
       model.setMetaInfo(modelJson.toString());
       model.setName(name);
       repositoryService.saveModel(model);
-      repositoryService.addModelEditorSource(model.getId(), json_xml.getBytes("utf-8"));
-      InputStream svgStream = new ByteArrayInputStream(svg_xml.getBytes("utf-8"));
+      repositoryService.addModelEditorSource(model.getId(), jsonXml.getBytes(StandardCharsets.UTF_8));
+      InputStream svgStream = new ByteArrayInputStream(svgXml.getBytes(StandardCharsets.UTF_8));
       TranscoderInput input = new TranscoderInput(svgStream);
       PNGTranscoder transcoder = new PNGTranscoder();
       // Setup output
@@ -73,7 +75,7 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
       // Do the transformation
       transcoder.transcode(input, output);
       BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
-      JsonNode jsonNode = objectMapper.readTree(json_xml);
+      JsonNode jsonNode = objectMapper.readTree(jsonXml);
       BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(jsonNode);
 
       byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnModel);
@@ -84,7 +86,7 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
       transToFile(rootPath,"//pic//",name,".jpg",result);
       repositoryService.addModelEditorSourceExtra(model.getId(), result);
       outStream.close();
-    } catch (Exception e) {
+    } catch (IOException | TranscoderException e) {
       LOGGER.error("Error saving model", e);
       throw new ActivitiException("Error saving model", e);
     }

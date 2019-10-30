@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class ActivitiModelController {
@@ -63,8 +64,8 @@ public class ActivitiModelController {
         editorNode.put("resourceId", "canvas");
         ObjectNode stencilSetNode = objectMapper.createObjectNode();
         stencilSetNode.put("namespace",                "http://b3mn.org/stencilset/bpmn2.0#");
-        editorNode.put("stencilset", stencilSetNode);
-        repositoryService.addModelEditorSource(id,editorNode.toString().getBytes("utf-8"));
+        editorNode.set("stencilset", stencilSetNode);
+        repositoryService.addModelEditorSource(id,editorNode.toString().getBytes(StandardCharsets.UTF_8));
         response.sendRedirect("/modeler.html?modelId="+id);    }
         /**     * 获取所有模型     */
         @RequestMapping("/modelList")
@@ -77,7 +78,7 @@ public class ActivitiModelController {
         /**     * 发布模型为流程定义     */
         @RequestMapping("/deploy")
         @ResponseBody
-        public Object deploy(String modelId) throws Exception {
+        public Object deploy(String modelId) throws IOException {
             //获取模型
             //RepositoryService repositoryService = processEngine.getRepositoryService();
             Model modelData = repositoryService.getModel(modelId);
