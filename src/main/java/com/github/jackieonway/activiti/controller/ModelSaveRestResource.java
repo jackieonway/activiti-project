@@ -77,7 +77,6 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
       BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
       JsonNode jsonNode = objectMapper.readTree(jsonXml);
       BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(jsonNode);
-
       byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnModel);
       //写入流程图xml
       transToFile(rootPath,"//xml//",name,".xml",bpmnBytes);
@@ -94,16 +93,16 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
 
   /**
    * 将Bytes写到文件中
-   * @param rootPath 文件路径 如: <p>win: D:\\xx\\</p> <p>linux : /app/file/</p>
-   * @param busiPath 业余文件路径 如: <p>xml,pic</p>
+   * @param rootPath 文件路径 如: <i>win: <b>D:\\xx\\</b> linux : <b>/app/file/</b></i>
+   * @param busiPath 业余文件路径 如: <i><b>xml,pic</b></i>
    * @param fileName 文件名
-   * @param extName 文件扩展名 如: <p>.xml , .jpg</p>
+   * @param extName 文件扩展名 如: <i><b>.xml , .jpg</b></i>
    * @param bytes 待写入文件的byte数组
    * @return  文件的相对路径
    * @author  Jackie
    * @date  2019/10/30 20:51
    * @since 1.0
-   * @method-name com.example.springbootdemo.controller.ModelSaveRestResource#transToFile
+   * @method-name com.github.jackieonway.activiti.controller.ModelSaveRestResource#transToFile
    * @see ModelSaveRestResource
    */
   private String transToFile(String rootPath, String busiPath, String fileName, String extName,byte[] bytes) {

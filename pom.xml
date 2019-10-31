@@ -55,8 +55,12 @@
     		<artifactId>activiti-spring-boot-starter-basic</artifactId>
     		<version>5.22.0</version>
 		</dependency>
-		
-		
+
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-modeler</artifactId>
+			<version>5.22.0</version>
+		</dependency>
 		<!--<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-explorer</artifactId>
@@ -67,20 +71,14 @@
 					<artifactId>dcharts-widget</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>-->
-
-		<dependency>
-			<groupId>org.activiti</groupId>
-			<artifactId>activiti-modeler</artifactId>
-			<version>5.22.0</version>
 		</dependency>
-		<!--<dependency>
+		<dependency>
    			<groupId>org.activiti</groupId>
     		<artifactId>activiti-rest</artifactId>
     		<version>5.22.0</version>
-		</dependency>-->
+		</dependency>
 
-		<!--<dependency>
+		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-diagram-rest</artifactId>
 			<version>5.22.0</version>
