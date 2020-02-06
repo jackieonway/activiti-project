@@ -36,6 +36,7 @@ public class ActivitiModelController {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
     /**
      * 新建一个空模型
      */
@@ -63,58 +64,72 @@ public class ActivitiModelController {
         editorNode.put("id", "canvas");
         editorNode.put("resourceId", "canvas");
         ObjectNode stencilSetNode = objectMapper.createObjectNode();
-        stencilSetNode.put("namespace",                "http://b3mn.org/stencilset/bpmn2.0#");
+        stencilSetNode.put("namespace", "http://b3mn.org/stencilset/bpmn2.0#");
         editorNode.set("stencilset", stencilSetNode);
-        repositoryService.addModelEditorSource(id,editorNode.toString().getBytes(StandardCharsets.UTF_8));
-        response.sendRedirect("/modeler.html?modelId="+id);    }
-        /**     * 获取所有模型     */
-        @RequestMapping("/modelList")
-        @ResponseBody
-        public Object modelList(){
-            //RepositoryService repositoryService = processEngine.getRepositoryService();
+        repositoryService.addModelEditorSource(id, editorNode.toString().getBytes(StandardCharsets.UTF_8));
+        response.sendRedirect("/modeler.html?modelId=" + id);
+    }
 
-            return repositoryService.createModelQuery().list();
+    /**
+     * 获取所有模型
+     */
+    @RequestMapping("/modelList")
+    @ResponseBody
+    public Object modelList() {
+        //RepositoryService repositoryService = processEngine.getRepositoryService();
+
+        return repositoryService.createModelQuery().list();
+    }
+
+    /**
+     * 发布模型为流程定义
+     */
+    @RequestMapping("/deploy")
+    @ResponseBody
+    public Object deploy(String modelId) throws IOException {
+        //获取模型
+        //RepositoryService repositoryService = processEngine.getRepositoryService();
+        Model modelData = repositoryService.getModel(modelId);
+        byte[] bytes = repositoryService.getModelEditorSource(modelData.getId());
+        if (bytes == null) {
+            return "模型数据为空，请先设计流程并成功保存，再进行发布。";
         }
-        /**     * 发布模型为流程定义     */
-        @RequestMapping("/deploy")
-        @ResponseBody
-        public Object deploy(String modelId) throws IOException {
-            //获取模型
-            //RepositoryService repositoryService = processEngine.getRepositoryService();
-            Model modelData = repositoryService.getModel(modelId);
-            byte[] bytes = repositoryService.getModelEditorSource(modelData.getId());
-            if (bytes == null) {
-                return "模型数据为空，请先设计流程并成功保存，再进行发布。";
-            }
-            JsonNode modelNode = new ObjectMapper().readTree(bytes);
-            BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
-            if(model.getProcesses().size()==0){
-                return "数据模型不符要求，请至少设计一条主线流程。";
-            }
-            byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
-            //发布流程
-             String processName = modelData.getName() + ".bpmn20.xml";
-             Deployment deployment = repositoryService.createDeployment()
-                     .name(modelData.getName())
-                     .addString(processName, new String(bpmnBytes, "UTF-8"))
-                     .deploy();
-             modelData.setDeploymentId(deployment.getId());
-             repositoryService.saveModel(modelData);
-             return "SUCCESS";
-        }     /**     *  启动流程     */
-        @RequestMapping("/start")
-        @ResponseBody
-        public Object startProcess(String keyName) {
-            ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName);
-            return process.getId() + " : " + process.getProcessDefinitionId();
+        JsonNode modelNode = new ObjectMapper().readTree(bytes);
+        BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+        if (model.getProcesses().size() == 0) {
+            return "数据模型不符要求，请至少设计一条主线流程。";
         }
-        /**     *  提交任务     */
-        @RequestMapping("/run")
-        @ResponseBody
-        public Object run(String processInstanceId) {
-            Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-            //log.info("task {} find ",task.getId());
-            taskService.complete(task.getId());
-            return "SUCCESS";
-        }
+        byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(model);
+        //发布流程
+        String processName = modelData.getName() + ".bpmn20.xml";
+        Deployment deployment = repositoryService.createDeployment()
+                .name(modelData.getName())
+                .addString(processName, new String(bpmnBytes, "UTF-8"))
+                .deploy();
+        modelData.setDeploymentId(deployment.getId());
+        repositoryService.saveModel(modelData);
+        return "SUCCESS";
+    }
+
+    /**
+     * 启动流程
+     */
+    @RequestMapping("/start")
+    @ResponseBody
+    public Object startProcess(String keyName) {
+        ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName);
+        return process.getId() + " : " + process.getProcessDefinitionId();
+    }
+
+    /**
+     * 提交任务
+     */
+    @RequestMapping("/run")
+    @ResponseBody
+    public Object run(String processInstanceId) {
+        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        //log.info("task {} find ",task.getId());
+        taskService.complete(task.getId());
+        return "SUCCESS";
+    }
 }
