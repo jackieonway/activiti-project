@@ -79,10 +79,10 @@ public class ModelSaveRestResource implements ModelDataJsonConstants {
             BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(jsonNode);
             byte[] bpmnBytes = new BpmnXMLConverter().convertToXML(bpmnModel);
             //写入流程图xml
-            transToFile(rootPath, "//xml//", name, ".xml", bpmnBytes);
+            transToFile(rootPath, "//xml//", name, ".bpmn20.xml", bpmnBytes);
             final byte[] result = outStream.toByteArray();
             // 写入流程图图片
-            transToFile(rootPath, "//pic//", name, ".jpg", result);
+            transToFile(rootPath, "//pic//", name, ".png", result);
             repositoryService.addModelEditorSourceExtra(model.getId(), result);
             outStream.close();
         } catch (IOException | TranscoderException e) {
