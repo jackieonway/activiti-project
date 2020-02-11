@@ -1,13 +1,11 @@
 package com.github.jackieonway.activiti.utils.page;
 
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,37 +40,4 @@ public class PageResult<T> {
         result.setList(new ArrayList<>(1));
         return result;
     }
-
-    public static <T> PageResult<T> newEmptyResult(Pagination page) {
-        PageResult<T> result = new PageResult<>();
-        result.setTotalCount(0L);
-        result.setPageNum(page.getCurrent());
-        result.setPageSize(page.getSize());
-        result.setList(new ArrayList<>(1));
-        return result;
-    }
-
-    /**
-     * 构造分页查询结果
-     *
-     * @param page     分页参数
-     * @param dataList 数据列表
-     * @param <T>      数据类型
-     * @return 分页查询结果
-     */
-    public static <T> PageResult<T> buildResult(Pagination page, List<T> dataList) {
-        PageResult<T> result = new PageResult<>();
-        if (null == page) {
-            return result;
-        }
-        result.setTotalCount((long) page.getTotal());
-        result.setPageSize(page.getSize());
-        result.setPageNum(page.getCurrent());
-        result.setList(dataList);
-        if (CollectionUtils.isEmpty(dataList)) {
-            result.setList(new ArrayList<>(1));
-        }
-        return result;
-    }
-
 }
