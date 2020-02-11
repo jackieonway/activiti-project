@@ -21,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -81,13 +82,13 @@ public class ActivitiModelController {
     /**
      * 发布模型为流程定义
      */
-    @PostMapping("/deploy")
+    @GetMapping("/deploy")
     @ResponseBody
     public Object deploy(String modelId) throws IOException {
         Model modelData = repositoryService.getModel(modelId);
         byte[] bytes = repositoryService.getModelEditorSource(modelData.getId());
-        byte[] modelEditorSourceExtra = repositoryService.getModelEditorSourceExtra(modelData.getId());
-        if (bytes == null && modelEditorSourceExtra == null) {
+        byte[] pngBytes = repositoryService.getModelEditorSourceExtra(modelData.getId());
+        if (bytes == null && pngBytes == null) {
             return "模型数据为空，请先设计流程并成功保存，再进行发布。";
         }
         JsonNode modelNode = new ObjectMapper().readTree(bytes);
@@ -101,8 +102,8 @@ public class ActivitiModelController {
         String processPngName = modelData.getName() + ".png";
         Deployment deployment = repositoryService.createDeployment()
                 .name(modelData.getName())
-                .addString(processName, new String(bpmnBytes, "UTF-8"))
-                .addString(processPngName, new String(modelEditorSourceExtra, "UTF-8"))
+                .addInputStream(processName, new ByteArrayInputStream(bpmnBytes))
+                .addInputStream(processPngName, new ByteArrayInputStream(pngBytes))
                 .deploy();
         modelData.setDeploymentId(deployment.getId());
         repositoryService.saveModel(modelData);
