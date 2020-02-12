@@ -155,9 +155,15 @@ public class ActivitiModelController {
      */
     @GetMapping("/runVariabals")
     @ResponseBody
-    public Object runVariabals(String processInstanceId, String name,String value) {
+    public Object runVariabals(String processInstanceId, String name,String value,String userId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        if (task == null){
+            return "当前审批已经审批结束";
+        }
         log.info("task {} find ",task.getId());
+        if (!task.getAssignee().equalsIgnoreCase(userId)){
+            return "FAIL，非法操作";
+        }
         Map<String,Object> variabals = new HashMap<>();
         String[] names = name.split(",");
         String[] values = value.split(",");
@@ -167,7 +173,8 @@ public class ActivitiModelController {
             }else
             if ("true".equalsIgnoreCase(values[i])){
                 variabals.put(names[i],true);
-            }else {
+            }
+            else {
                 variabals.put(names[i],values[i]);
             }
         }

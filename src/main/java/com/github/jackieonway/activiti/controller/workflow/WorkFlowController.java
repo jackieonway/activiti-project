@@ -5,9 +5,12 @@
 package com.github.jackieonway.activiti.controller.workflow;
 
 import com.github.jackieonway.activiti.entity.actentity.ActTaskEntity;
+import com.github.jackieonway.activiti.service.WorkFlowService;
 import com.github.jackieonway.activiti.utils.ResponseUtils;
 import com.github.jackieonway.activiti.utils.ResultMsg;
 import com.github.jackieonway.activiti.utils.page.PageResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +34,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/workFlow")
+@Api(value = "用户流程相关接口", tags = "用户相关接口")
 public class WorkFlowController {
     @Autowired
     private RepositoryService repositoryService;
@@ -36,6 +42,9 @@ public class WorkFlowController {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private WorkFlowService workFlowService;
 
     /**
      * 查询当前用户待办任务
@@ -51,12 +60,13 @@ public class WorkFlowController {
      * @see WorkFlowController
      */
     @GetMapping("/queryCurrentUserTask")
+    @ApiOperation(value = "查询用户当前任务")
     public ResultMsg queryCurrentUserTask(String userId,Integer pageNum, Integer pageSize){
         TaskQuery taskQuery = taskService.createTaskQuery().taskAssignee(userId);
         List<Task> list = taskQuery.listPage((pageNum-1)*pageSize, pageSize);
         List<ActTaskEntity> actTaskEntities = new ArrayList<>();
         if (!CollectionUtils.isEmpty(list)){
-            list.stream().forEach(task -> {
+            list.forEach(task -> {
                 ActTaskEntity actTaskEntity = new ActTaskEntity();
                 BeanUtils.copyProperties(task,actTaskEntity);
                 actTaskEntities.add(actTaskEntity);
@@ -69,4 +79,9 @@ public class WorkFlowController {
         return ResponseUtils.success(pageResult);
     }
 
+    @GetMapping("/showImage")
+    @ApiOperation(value = "查询流程图")
+    public void readProcessImg(String processInstanceId, HttpServletResponse response ) throws IOException {
+        workFlowService.readProcessImg(processInstanceId,response);
+    }
 }
