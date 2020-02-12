@@ -1,4 +1,4 @@
-package com.github.jackieonway.activiti.controller;
+package com.github.jackieonway.activiti.controller.activiti;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class ActivitiModelController {
@@ -81,6 +83,7 @@ public class ActivitiModelController {
 
     /**
      * 发布模型为流程定义
+     * http://localhost:8080/deploy?modelId=1
      */
     @GetMapping("/deploy")
     @ResponseBody
@@ -113,7 +116,7 @@ public class ActivitiModelController {
     /**
      * 启动流程
      */
-    @PostMapping("/start")
+    @GetMapping("/start")
     @ResponseBody
     public Object startProcess(String keyName) {
         ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName);
@@ -121,14 +124,55 @@ public class ActivitiModelController {
     }
 
     /**
+     * 启动流程
+     * http://localhost:8080/startBusinessKey?keyName=leaveBill&name=userId&value=4&businessKey=1
+     */
+    @GetMapping("/startBusinessKey")
+    @ResponseBody
+    public Object startProcessByBusinessKey(String keyName, String name,String value,String businessKey) {
+        Map<String,Object> variabals = new HashMap<>();
+        variabals.put(name,value);
+        ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName,businessKey,variabals);
+        return process.getId() + " : " + process.getProcessDefinitionId();
+    }
+
+
+    /**
      * 提交任务
      */
-    @PostMapping("/run")
+    @GetMapping("/run")
     @ResponseBody
     public Object run(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        //log.info("task {} find ",task.getId());
+        log.info("task {} find ",task.getId());
         taskService.complete(task.getId());
+        return "SUCCESS";
+    }
+
+    /**
+     * 提交任务
+     * http://localhost:8080/runVariabals?processInstanceId=20001&name=giveup,userId&value=false,3
+     */
+    @GetMapping("/runVariabals")
+    @ResponseBody
+    public Object runVariabals(String processInstanceId, String name,String value) {
+        Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        log.info("task {} find ",task.getId());
+        Map<String,Object> variabals = new HashMap<>();
+        String[] names = name.split(",");
+        String[] values = value.split(",");
+        for (int i = 0; i < names.length; i++) {
+            if ("false".equalsIgnoreCase(values[i])){
+                variabals.put(names[i],false);
+            }else
+            if ("true".equalsIgnoreCase(values[i])){
+                variabals.put(names[i],true);
+            }else {
+                variabals.put(names[i],values[i]);
+            }
+        }
+
+        taskService.complete(task.getId(),variabals);
         return "SUCCESS";
     }
 }

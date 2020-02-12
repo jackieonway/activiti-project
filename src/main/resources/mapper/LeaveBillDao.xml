@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="reason" jdbcType="VARCHAR" property="reason" />
-    <result column="leave_time" jdbcType="DATETIME" property="leaveTime" />
+    <result column="leave_time" jdbcType="TIMESTAMP" property="leaveTime" />
     <result column="status" jdbcType="TINYINT" property="status" />
   </resultMap>
   <sql id="Base_Column_List">
@@ -17,7 +17,7 @@
     from leave_bill
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectLeaveBills" resultType="com.github.jackieonway.activiti.entity.LeaveBillDo">
+  <select id="selectLeaveBills" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from leave_bill
@@ -29,20 +29,20 @@
         and reason like  %#{reason,jdbcType=VARCHAR}%
       </if>
       <if test="leaveTime != null">
-        and leave_time = #{leaveTime,jdbcType=DATETIME}
+        and leave_time = #{leaveTime,jdbcType=TIMESTAMP}
       </if>
       <if test="status != null">
         and status = #{status,jdbcType=TINYINT}
       </if>
       <if test="startTime != null and endTime != null">
-        and leave_time between #{startTime,jdbcType=DATETIME} and #{endTime,jdbcType=DATETIME}
+        and leave_time between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
       </if>
     </where>
-    limit #{((pageNum - 1) * pageSize)},#{pageSize}
+    limit #{queryConditionBean.startNum},#{queryConditionBean.pageSize}
   </select>
   <select id="countLeaveBill" resultType="java.lang.Long">
     select
-    coun(*)
+    count(*)
     from leave_bill
     <where>
       <if test="userId != null">
@@ -52,13 +52,13 @@
         and reason like  %#{reason,jdbcType=VARCHAR}%
       </if>
       <if test="leaveTime != null">
-        and leave_time = #{leaveTime,jdbcType=DATETIME}
+        and leave_time = #{leaveTime,jdbcType=DATE}
       </if>
       <if test="status != null">
         and status = #{status,jdbcType=TINYINT}
       </if>
       <if test="startTime != null and endTime != null">
-        and leave_time between #{startTime,jdbcType=DATETIME} and #{endTime,jdbcType=DATETIME}
+        and leave_time between #{startTime,jdbcType=DATE} and #{endTime,jdbcType=DATE}
       </if>
     </where>
   </select>
@@ -72,7 +72,7 @@
     </selectKey>
     insert into leave_bill (user_id, reason, leave_time, 
       status)
-    values (#{userId,jdbcType=INTEGER}, #{reason,jdbcType=VARCHAR}, #{leaveTime,jdbcType=DATETIME}, 
+    values (#{userId,jdbcType=INTEGER}, #{reason,jdbcType=VARCHAR}, #{leaveTime,jdbcType=TIMESTAMP},
       #{status,jdbcType=TINYINT})
   </insert>
   <insert id="insertSelective" parameterType="com.github.jackieonway.activiti.entity.LeaveBillDo">
@@ -102,7 +102,7 @@
         #{reason,jdbcType=VARCHAR},
       </if>
       <if test="leaveTime != null">
-        #{leaveTime,jdbcType=DATETIME},
+        #{leaveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null">
         #{status,jdbcType=TINYINT},
@@ -110,7 +110,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.github.jackieonway.activiti.entity.LeaveBillDo">
-    upDATETIME leave_bill
+    update leave_bill
     <set>
       <if test="userId != null">
         user_id = #{userId,jdbcType=INTEGER},
@@ -119,7 +119,7 @@
         reason = #{reason,jdbcType=VARCHAR},
       </if>
       <if test="leaveTime != null">
-        leave_time = #{leaveTime,jdbcType=DATETIME},
+        leave_time = #{leaveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=TINYINT},
@@ -128,10 +128,10 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.github.jackieonway.activiti.entity.LeaveBillDo">
-    upDATETIME leave_bill
+    update leave_bill
     set user_id = #{userId,jdbcType=INTEGER},
       reason = #{reason,jdbcType=VARCHAR},
-      leave_time = #{leaveTime,jdbcType=DATETIME},
+      leave_time = #{leaveTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>

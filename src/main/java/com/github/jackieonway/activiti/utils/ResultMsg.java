@@ -1,7 +1,7 @@
 package com.github.jackieonway.activiti.utils;
 
-import com.gsww.approval.config.emum.ResultEnum;
-import com.gsww.approval.config.emum.ResultStatusCode;
+import com.github.jackieonway.activiti.config.emum.ResultEnum;
+import com.github.jackieonway.activiti.config.emum.ResultStatusCode;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

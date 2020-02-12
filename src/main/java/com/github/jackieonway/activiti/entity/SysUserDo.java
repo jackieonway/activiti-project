@@ -1,11 +1,13 @@
 package com.github.jackieonway.activiti.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.jackieonway.activiti.utils.page.QueryConditionBean;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -57,6 +59,8 @@ public class SysUserDo implements Serializable {
     * 创建时间
     **/ 
     @ApiModelProperty("创建时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
     private Date gmtCreate;
 
     /**
@@ -69,4 +73,27 @@ public class SysUserDo implements Serializable {
      **/
     @ApiModelProperty("分页")
     private QueryConditionBean queryConditionBean;
+
+
+    /**
+     * 关键字
+     **/
+    @ApiModelProperty("关键字")
+    private String keywords;
+
+    /**
+     * 开始时间
+     **/
+    @ApiModelProperty("开始时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
+    private Date startTime;
+
+    /**
+     * 结束时间
+     **/
+    @ApiModelProperty("结束时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" , timezone = "GMT+8")
+    private Date endTime;
 }

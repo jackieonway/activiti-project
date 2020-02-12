@@ -4,10 +4,17 @@
  */
 package com.github.jackieonway.activiti.service.impl;
 
+import com.github.jackieonway.activiti.dao.SysUserDao;
+import com.github.jackieonway.activiti.entity.LeaveBillDo;
 import com.github.jackieonway.activiti.entity.SysUserDo;
 import com.github.jackieonway.activiti.service.SysUserService;
+import com.github.jackieonway.activiti.utils.ResponseUtils;
 import com.github.jackieonway.activiti.utils.ResultMsg;
+import com.github.jackieonway.activiti.utils.page.PageResult;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author Jackie
@@ -15,28 +22,48 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SysUserServiceImpl implements SysUserService {
+
+    @Resource
+    private SysUserDao sysUserDao;
     @Override
     public ResultMsg createSysUser(SysUserDo sysUserDo) {
-        return null;
+        int i = sysUserDao.insertSelective(sysUserDo);
+        if (i > 0) {
+            return ResponseUtils.success();
+        }else {
+            return ResponseUtils.fail();
+        }
     }
 
     @Override
     public ResultMsg modifySysUser(SysUserDo sysUserDo) {
-        return null;
+        int i = sysUserDao.updateByPrimaryKeySelective(sysUserDo);
+        if (i > 0) {
+            return ResponseUtils.success();
+        }else {
+            return ResponseUtils.fail();
+        }
     }
 
     @Override
     public ResultMsg querySysUser(SysUserDo sysUserDo) {
-        return null;
+        return ResponseUtils.success(sysUserDao.selectByPrimaryKey(sysUserDo.getId()));
     }
 
     @Override
     public ResultMsg querySysUsers(SysUserDo sysUserDo) {
-        return null;
+        List<SysUserDo> sysUserDos = sysUserDao.selectSysUsers(sysUserDo);
+        Long count = sysUserDao.countSysUser(sysUserDo);
+        PageResult<SysUserDo> pageResult = new PageResult<>();
+        pageResult.setPageNum(sysUserDo.getQueryConditionBean().getPageNum());
+        pageResult.setPageSize(sysUserDo.getQueryConditionBean().getPageSize());
+        pageResult.setList(sysUserDos);
+        pageResult.setTotalCount(count);
+        return ResponseUtils.success(pageResult);
     }
 
     @Override
     public ResultMsg deleteSysUser(SysUserDo sysUserDo) {
-        return null;
+        return ResponseUtils.success(sysUserDao.deleteByPrimaryKey(sysUserDo.getId()));
     }
 }

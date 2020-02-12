@@ -28,15 +28,28 @@ public class QueryConditionBean implements Serializable {
         this.pageSize = pageSize;
     }
 
-    @ApiModelProperty(value = "当前页", required = true)
+    @ApiModelProperty(value = "当前页")
     private Integer pageNum;
 
-    @ApiModelProperty(value = "每页条数", required = true)
+    @ApiModelProperty(value = "每页条数")
     private Integer pageSize;
 
     private String orderField;
 
     private String orderDirection;
+
+    public Integer getStartNum() {
+        if (null == pageNum || pageSize == null) {
+            return null;
+        }
+        return (pageNum - 1) * pageSize;
+    }
+
+    public void setStartNum(Integer startNum) {
+        this.startNum = startNum;
+    }
+
+    private Integer startNum;
 
     public Integer getPageNum() {
         return pageNum;

@@ -1,6 +1,6 @@
 package com.github.jackieonway.activiti.handler;
 
-import com.gsww.approval.common.Constants;
+import com.github.jackieonway.activiti.common.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

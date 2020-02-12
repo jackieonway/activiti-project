@@ -7,7 +7,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="level" jdbcType="TINYINT" property="level" />
     <result column="leader_id" jdbcType="INTEGER" property="leaderId" />
-    <result column="gmt_create" jdbcType="DATE" property="gmtCreate" />
+    <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate" />
   </resultMap>
   <sql id="Base_Column_List">
     id, username, name, level, leader_id, gmt_create
@@ -17,6 +17,45 @@
     <include refid="Base_Column_List" />
     from sys_user
     where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectSysUsers" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from sys_user
+      <where>
+        <if test="keywords != null">
+          and (username like  %#{username,jdbcType=VARCHAR}% or name like  %#{name,jdbcType=VARCHAR}%)
+        </if>
+        <if test="leaderId != null">
+          and leader_id = #{leaderId,jdbcType=INTEGER}
+        </if>
+        <if test="level != null">
+          and level = #{status,jdbcType=TINYINT}
+        </if>
+        <if test="startTime != null and endTime != null">
+          and gmt_create between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+        </if>
+      </where>
+      limit #{queryConditionBean.startNum},#{queryConditionBean.pageSize}
+    </select>
+  <select id="countSysUser" resultType="java.lang.Long">
+    select
+    count(*)
+    from sys_user
+    <where>
+      <if test="keywords != null">
+        and (username like  %#{username,jdbcType=VARCHAR}% or name like  %#{name,jdbcType=VARCHAR}%)
+      </if>
+      <if test="leaderId != null">
+        and leader_id = #{leaderId,jdbcType=INTEGER}
+      </if>
+      <if test="level != null">
+        and level = #{status,jdbcType=TINYINT}
+      </if>
+      <if test="startTime != null and endTime != null">
+        and gmt_create between #{startTime,jdbcType=TIMESTAMP} and #{endTime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from sys_user
@@ -29,7 +68,7 @@
     insert into sys_user (username, name, level, 
       leader_id, gmt_create)
     values (#{username,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{level,jdbcType=TINYINT}, 
-      #{leaderId,jdbcType=INTEGER}, #{gmtCreate,jdbcType=DATE})
+      #{leaderId,jdbcType=INTEGER}, #{gmtCreate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.github.jackieonway.activiti.entity.SysUserDo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
@@ -67,7 +106,7 @@
         #{leaderId,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null">
-        #{gmtCreate,jdbcType=DATE},
+        #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -87,7 +126,7 @@
         leader_id = #{leaderId,jdbcType=INTEGER},
       </if>
       <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=DATE},
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -98,7 +137,7 @@
       name = #{name,jdbcType=VARCHAR},
       level = #{level,jdbcType=TINYINT},
       leader_id = #{leaderId,jdbcType=INTEGER},
-      gmt_create = #{gmtCreate,jdbcType=DATE}
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

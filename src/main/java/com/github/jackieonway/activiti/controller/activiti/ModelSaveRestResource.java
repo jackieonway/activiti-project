@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.jackieonway.activiti.controller;
+package com.github.jackieonway.activiti.controller.activiti;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +42,8 @@ import java.nio.charset.StandardCharsets;
 @RestController
 @RequestMapping("/service")
 public class ModelSaveRestResource implements ModelDataJsonConstants {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModelSaveRestResource.class);
+    private Logger LOGGER = LoggerFactory.getLogger(ModelSaveRestResource.class);
+
     @Autowired
     private RepositoryService repositoryService;
 

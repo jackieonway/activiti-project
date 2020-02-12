@@ -1,7 +1,7 @@
 server:
   port: 8080
 mybatis:
-  mapper-locations: classpath:mapper/*/*.xml
+  mapper-locations: classpath:mapper/*.xml
 spring:
   application:
     name: ServerPatrol
@@ -52,6 +52,28 @@ spring:
       useGlobalDataSourceStat: true
       timeBetweenEvictionRunsMillis: 60000
       validationQuery: select 'x'
+  jackieonway:
+    swagger:
+      enable: true
+      api-info:
+        version: 1.0
+        title: "请假接口信息"
+        description: "请假Swagger接口信息"
+        terms-of-service-url: "http://${spring.cloud.client.ip-address}:${server.port}"
+        contact:
+          name: "jackieonway"
+          url: "http://${spring.cloud.client.ip-address}:${server.port}"
+        params:
+          - name: "AccessToken"
+            description: "登录校验Token"
+            model-ref:
+              type: "string"
+            param-type: "header"
+            required: false
+            value: 63232
 activiti:
   root:
     path: D:\\activiti\\
+logging:
+  level:
+    com.github.jackieonway: debug
