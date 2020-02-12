@@ -35,6 +35,32 @@ public class ResultMsg<T> implements Serializable {
     }
 
     /**
+     * resultMsg 构造
+     *
+     * @param resultCode
+     * @param resultMsg
+     * @param resultData
+     */
+    public ResultMsg(int resultCode, String resultMsg, T resultData) {
+        this.resultCode = resultCode;
+        this.resultData = resultData;
+        this.resultMsg = resultMsg;
+    }
+
+    /**
+     * @param resultCode
+     * @param resultMsg
+     * @param resultData
+     * @param e
+     */
+    public ResultMsg(int resultCode, String resultMsg, T resultData, Exception e) {
+        this.resultCode = resultCode;
+        this.resultData = resultData;
+        this.resultMsg = resultMsg;
+        this.exception = e;
+    }
+
+    /**
      * @return 返回封装类
      * @Author deng1
      * @Description 默认成功返回值
@@ -74,54 +100,8 @@ public class ResultMsg<T> implements Serializable {
         return rm.setResultCode(ResultStatusCode.ERROR.getResultCode()).setResultMsg("输入校验失败");
     }
 
-    /**
-     * resultMsg 构造
-     *
-     * @param resultCode
-     * @param resultMsg
-     * @param resultData
-     */
-    public ResultMsg(int resultCode, String resultMsg, T resultData) {
-        this.resultCode = resultCode;
-        this.resultData = resultData;
-        this.resultMsg = resultMsg;
-    }
-
-    /**
-     * @param resultCode
-     * @param resultMsg
-     * @param resultData
-     * @param e
-     */
-    public ResultMsg(int resultCode, String resultMsg, T resultData, Exception e) {
-        this.resultCode = resultCode;
-        this.resultData = resultData;
-        this.resultMsg = resultMsg;
-        this.exception = e;
-    }
-
     public Integer getResultCode() {
         return resultCode;
-    }
-
-    public String getResultMsg() {
-        return resultMsg;
-    }
-
-    public Integer getErrorCode() {
-        return errorCode;
-    }
-
-    public T getResultData() {
-        return resultData;
-    }
-
-    public ResultEnum getResultEnum() {
-        return resultEnum;
-    }
-
-    public Exception getException() {
-        return exception;
     }
 
     public ResultMsg<T> setResultCode(final Integer resultCode) {
@@ -129,14 +109,17 @@ public class ResultMsg<T> implements Serializable {
         return this;
     }
 
+    public String getResultMsg() {
+        return resultMsg;
+    }
+
     public ResultMsg<T> setResultMsg(final String msg) {
         this.resultMsg = msg;
         return this;
     }
 
-    public ResultMsg<T> setResultData(final T data) {
-        this.resultData = data;
-        return this;
+    public Integer getErrorCode() {
+        return errorCode;
     }
 
     public ResultMsg<T> setErrorCode(final Integer errorCode) {
@@ -144,13 +127,30 @@ public class ResultMsg<T> implements Serializable {
         return this;
     }
 
-    public ResultMsg<T> getException(final ResultEnum resultEnum) {
-        this.resultEnum = resultEnum;
+    public T getResultData() {
+        return resultData;
+    }
+
+    public ResultMsg<T> setResultData(final T data) {
+        this.resultData = data;
         return this;
+    }
+
+    public ResultEnum getResultEnum() {
+        return resultEnum;
     }
 
     public ResultMsg<T> setResultEnum(final Exception exception) {
         this.exception = exception;
+        return this;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
+    public ResultMsg<T> getException(final ResultEnum resultEnum) {
+        this.resultEnum = resultEnum;
         return this;
     }
 

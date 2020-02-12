@@ -3,6 +3,10 @@ package com.github.jackieonway.activiti.controller.activiti;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.jackieonway.activiti.entity.LeaveBillDo;
+import com.github.jackieonway.activiti.service.LeaveBillService;
+import com.github.jackieonway.activiti.utils.ResponseUtils;
+import com.github.jackieonway.activiti.utils.ResultMsg;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
@@ -18,7 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -38,6 +45,9 @@ public class ActivitiModelController {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private LeaveBillService leaveBillService;
 
     /**
      * 新建一个空模型
@@ -129,11 +139,26 @@ public class ActivitiModelController {
      */
     @GetMapping("/startBusinessKey")
     @ResponseBody
-    public Object startProcessByBusinessKey(String keyName, String name,String value,String businessKey) {
-        Map<String,Object> variabals = new HashMap<>();
-        variabals.put(name,value);
-        ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName,businessKey,variabals);
-        return process.getId() + " : " + process.getProcessDefinitionId();
+    public ResultMsg startProcessByBusinessKey(String keyName, String name, String value, String businessKey) {
+        LeaveBillDo leaveBillDo = new LeaveBillDo();
+        leaveBillDo.setId(Integer.valueOf(businessKey));
+        ResultMsg<LeaveBillDo> resultMsg = leaveBillService.queryLeaveBill(leaveBillDo);
+        LeaveBillDo resultData = resultMsg.getResultData();
+        if (resultData == null) {
+            return ResponseUtils.fail("请假单不存在");
+        }
+        if (resultData.getStatus() > 0) {
+            return ResponseUtils.fail("请假单已在审批或审批结束");
+        }
+        Map<String, Object> variabals = new HashMap<>();
+        variabals.put(name, value);
+        ProcessInstance process = runtimeService.startProcessInstanceByKey(keyName, businessKey, variabals);
+        Map<String, Object> result = new HashMap<>();
+        result.put("processInstanceId", process.getId());
+        result.put("processDefinitionId", process.getProcessDefinitionId());
+        leaveBillDo.setStatus(1);
+        leaveBillService.modifyLeaveBill(leaveBillDo);
+        return ResponseUtils.success(result);
     }
 
 
@@ -144,42 +169,67 @@ public class ActivitiModelController {
     @ResponseBody
     public Object run(String processInstanceId) {
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        log.info("task {} find ",task.getId());
+        log.info("task {} find ", task.getId());
         taskService.complete(task.getId());
         return "SUCCESS";
     }
 
     /**
      * 提交任务
-     * http://localhost:8080/runVariabals?processInstanceId=20001&name=giveup,userId&value=false,3
+     * http://localhost:8080/runVariabals?processInstanceId=20001&name=giveup,userId&value=false,3&leaveBillId=1
      */
     @GetMapping("/runVariabals")
     @ResponseBody
-    public Object runVariabals(String processInstanceId, String name,String value,String userId) {
+    public Object runVariabals(String processInstanceId, String name, String value, String userId, Integer leaveBillId) {
+        LeaveBillDo leaveBillDo = new LeaveBillDo();
+        leaveBillDo.setId(leaveBillId);
+        ResultMsg<LeaveBillDo> resultMsg = leaveBillService.queryLeaveBill(leaveBillDo);
+        if (resultMsg.getResultData() == null) {
+            return ResponseUtils.fail("请假单不存在");
+        }
+        if (resultMsg.getResultData().getStatus() < 1) {
+            return ResponseUtils.fail("非法操作");
+        }
+        if (resultMsg.getResultData().getStatus() > 1) {
+            return ResponseUtils.fail("请假单已审批结束");
+        }
         Task task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
-        if (task == null){
+        if (task == null) {
             return "当前审批已经审批结束";
         }
-        log.info("task {} find ",task.getId());
-        if (!task.getAssignee().equalsIgnoreCase(userId)){
+        log.info("task {} find ", task.getId());
+        if (!task.getAssignee().equalsIgnoreCase(userId)) {
             return "FAIL，非法操作";
         }
-        Map<String,Object> variabals = new HashMap<>();
+        Map<String, Object> variabals = new HashMap<>();
         String[] names = name.split(",");
         String[] values = value.split(",");
+        String condition = "";
+        boolean result = false;
         for (int i = 0; i < names.length; i++) {
-            if ("false".equalsIgnoreCase(values[i])){
-                variabals.put(names[i],false);
-            }else
-            if ("true".equalsIgnoreCase(values[i])){
-                variabals.put(names[i],true);
+            if ("giveup".equalsIgnoreCase(names[i])) {
+                condition = "giveup";
             }
-            else {
-                variabals.put(names[i],values[i]);
+            if ("false".equalsIgnoreCase(values[i])) {
+                variabals.put(names[i], false);
+                result = false;
+            } else if ("true".equalsIgnoreCase(values[i])) {
+                variabals.put(names[i], true);
+                result = true;
+            } else {
+                variabals.put(names[i], values[i]);
             }
         }
-
-        taskService.complete(task.getId(),variabals);
+        taskService.complete(task.getId(), variabals);
+        task = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult();
+        if (task == null) {
+            if ("giveup".equalsIgnoreCase(condition) && result) {
+                leaveBillDo.setStatus(3);
+            } else {
+                leaveBillDo.setStatus(2);
+            }
+            leaveBillService.modifyLeaveBill(leaveBillDo);
+        }
         return "SUCCESS";
     }
 }

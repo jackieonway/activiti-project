@@ -174,14 +174,6 @@ public enum ResultEnum {
         this.message = message;
     }
 
-    public Integer code() {
-        return this.code;
-    }
-
-    public String message() {
-        return this.message;
-    }
-
     public static String getMessage(String name) {
         for (ResultEnum item : ResultEnum.values()) {
             if (item.name().equals(name)) {
@@ -198,6 +190,14 @@ public enum ResultEnum {
             }
         }
         return null;
+    }
+
+    public Integer code() {
+        return this.code;
+    }
+
+    public String message() {
+        return this.message;
     }
 
     @Override

@@ -28,31 +28,31 @@ public class LeaveBillController {
 
     @GetMapping("/createLeaveBill")
     @ApiOperation(value = "创建请假单")
-    public ResultMsg createLeaveBill(LeaveBillDo leaveBillDo){
+    public ResultMsg createLeaveBill(LeaveBillDo leaveBillDo) {
         return leaveBillService.createLeaveBill(leaveBillDo);
     }
 
     @GetMapping("/modifyLeaveBill")
     @ApiOperation(value = "根据请假单id删除请假单")
-    public ResultMsg modifyLeaveBill(LeaveBillDo leaveBillDo){
+    public ResultMsg modifyLeaveBill(LeaveBillDo leaveBillDo) {
         return leaveBillService.modifyLeaveBill(leaveBillDo);
     }
 
     @GetMapping("/queryLeaveBill")
     @ApiOperation(value = "根据请假单id查询请假单")
-    public ResultMsg queryLeaveBill(LeaveBillDo leaveBillDo){
+    public ResultMsg queryLeaveBill(LeaveBillDo leaveBillDo) {
         return leaveBillService.queryLeaveBill(leaveBillDo);
     }
 
     @GetMapping("/queryLeaveBills")
     @ApiOperation(value = "查询请假单列表")
-    public ResultMsg queryLeaveBills(LeaveBillDo leaveBillDo){
+    public ResultMsg queryLeaveBills(LeaveBillDo leaveBillDo) {
         return leaveBillService.queryLeaveBills(leaveBillDo);
     }
 
     @GetMapping("/deleteLeaveBill")
     @ApiOperation(value = "根据请假单id删除请假单")
-    public ResultMsg deleteLeaveBill(LeaveBillDo leaveBillDo){
+    public ResultMsg deleteLeaveBill(LeaveBillDo leaveBillDo) {
         return leaveBillService.deleteLeaveBill(leaveBillDo);
     }
 }

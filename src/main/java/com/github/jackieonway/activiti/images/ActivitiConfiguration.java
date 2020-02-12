@@ -1,14 +1,13 @@
 package com.github.jackieonway.activiti.images;
 
-import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.activiti.spring.SpringProcessEngineConfiguration;
 import org.activiti.spring.boot.ProcessEngineConfigurationConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ActivitiConfiguration implements ProcessEngineConfigurationConfigurer{
-    
+public class ActivitiConfiguration implements ProcessEngineConfigurationConfigurer {
+
     @Autowired
     private CustomProcessDiagramGeneratorI customProcessDiagramGeneratorI;
 

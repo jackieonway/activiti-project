@@ -30,7 +30,7 @@ public class LeaveBillServiceImpl implements LeaveBillService {
         int i = leaveBillDao.insertSelective(leaveBillDo);
         if (i > 0) {
             return ResponseUtils.success();
-        }else {
+        } else {
             return ResponseUtils.fail();
         }
     }
@@ -40,13 +40,13 @@ public class LeaveBillServiceImpl implements LeaveBillService {
         int i = leaveBillDao.updateByPrimaryKeySelective(leaveBillDo);
         if (i > 0) {
             return ResponseUtils.success();
-        }else {
+        } else {
             return ResponseUtils.fail();
         }
     }
 
     @Override
-    public ResultMsg queryLeaveBill(LeaveBillDo leaveBillDo) {
+    public ResultMsg<LeaveBillDo> queryLeaveBill(LeaveBillDo leaveBillDo) {
         return ResponseUtils.success(leaveBillDao.selectByPrimaryKey(leaveBillDo.getId()));
     }
 
@@ -67,7 +67,7 @@ public class LeaveBillServiceImpl implements LeaveBillService {
         int i = leaveBillDao.deleteByPrimaryKey(leaveBillDo.getId());
         if (i > 0) {
             return ResponseUtils.success();
-        }else {
+        } else {
             return ResponseUtils.fail();
         }
     }

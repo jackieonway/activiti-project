@@ -50,6 +50,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     @Autowired
     private ProcessEngineConfiguration processEngineConfiguration;
+
     /**
      * @读取动态流程图
      */
@@ -81,7 +82,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 .getProcessDiagramGenerator();
         InputStream imageStream = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis,
                 highLightedFlows, "宋体", "宋体", "宋体",
-                null, 1.0, new Color[] { WorkflowConstants.COLOR_NORMAL, WorkflowConstants.COLOR_CURRENT }, currIds);
+                null, 1.0, new Color[]{WorkflowConstants.COLOR_NORMAL, WorkflowConstants.COLOR_CURRENT}, currIds);
         // 输出资源内容到相应对象
         byte[] b = new byte[1024];
         int len;
@@ -117,7 +118,7 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                 HistoricActivityInstance activityImpl1 = historicActivityInstances.get(j);
                 // 后续第二个节点
                 HistoricActivityInstance activityImpl2 = historicActivityInstances.get(j + 1);
-                if (Math.abs(activityImpl1.getStartTime().getTime()-activityImpl2.getStartTime().getTime()) < 200) {
+                if (Math.abs(activityImpl1.getStartTime().getTime() - activityImpl2.getStartTime().getTime()) < 200) {
 //                    if (activityImpl1.getStartTime().equals(activityImpl2.getStartTime())) {
                     // 如果第一个节点和第二个节点开始时间相同保存
                     ActivityImpl sameActivityImpl2 = processDefinitionEntity

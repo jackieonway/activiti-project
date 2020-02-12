@@ -6,7 +6,6 @@ package com.github.jackieonway.activiti.service;
 
 import com.github.jackieonway.activiti.entity.LeaveBillDo;
 import com.github.jackieonway.activiti.utils.ResultMsg;
-import com.github.jackieonway.activiti.utils.page.QueryConditionBean;
 
 /**
  * @author Jackie
@@ -18,7 +17,7 @@ public interface LeaveBillService {
 
     ResultMsg modifyLeaveBill(LeaveBillDo leaveBillDo);
 
-    ResultMsg queryLeaveBill(LeaveBillDo leaveBillDo);
+    ResultMsg<LeaveBillDo> queryLeaveBill(LeaveBillDo leaveBillDo);
 
     ResultMsg queryLeaveBills(LeaveBillDo leaveBillDo);
 

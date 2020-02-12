@@ -5,7 +5,6 @@
 package com.github.jackieonway.activiti.service.impl;
 
 import com.github.jackieonway.activiti.dao.SysUserDao;
-import com.github.jackieonway.activiti.entity.LeaveBillDo;
 import com.github.jackieonway.activiti.entity.SysUserDo;
 import com.github.jackieonway.activiti.service.SysUserService;
 import com.github.jackieonway.activiti.utils.ResponseUtils;
@@ -25,12 +24,13 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Resource
     private SysUserDao sysUserDao;
+
     @Override
     public ResultMsg createSysUser(SysUserDo sysUserDo) {
         int i = sysUserDao.insertSelective(sysUserDo);
         if (i > 0) {
             return ResponseUtils.success();
-        }else {
+        } else {
             return ResponseUtils.fail();
         }
     }
@@ -40,7 +40,7 @@ public class SysUserServiceImpl implements SysUserService {
         int i = sysUserDao.updateByPrimaryKeySelective(sysUserDo);
         if (i > 0) {
             return ResponseUtils.success();
-        }else {
+        } else {
             return ResponseUtils.fail();
         }
     }

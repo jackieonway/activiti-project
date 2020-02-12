@@ -28,31 +28,31 @@ public class UserController {
 
     @GetMapping("/createUser")
     @ApiOperation(value = "创建用户")
-    public ResultMsg createSysUser(SysUserDo sysUserDo){
+    public ResultMsg createSysUser(SysUserDo sysUserDo) {
         return sysUserService.createSysUser(sysUserDo);
     }
 
     @GetMapping("/modifyUser")
     @ApiOperation(value = "根据用户id删除用户")
-    public ResultMsg modifySysUser(SysUserDo sysUserDo){
+    public ResultMsg modifySysUser(SysUserDo sysUserDo) {
         return sysUserService.modifySysUser(sysUserDo);
     }
 
     @GetMapping("/queryUser")
     @ApiOperation(value = "根据用户id查询用户")
-    public ResultMsg querySysUser(SysUserDo sysUserDo){
+    public ResultMsg querySysUser(SysUserDo sysUserDo) {
         return sysUserService.querySysUser(sysUserDo);
     }
 
     @GetMapping("/queryUsers")
     @ApiOperation(value = "查询用户列表")
-    public ResultMsg querySysUsers(SysUserDo sysUserDo){
+    public ResultMsg querySysUsers(SysUserDo sysUserDo) {
         return sysUserService.querySysUsers(sysUserDo);
     }
 
     @GetMapping("/deleteUser")
     @ApiOperation(value = "根据用户id删除用户")
-    public ResultMsg deleteUser(SysUserDo sysUserDo){
+    public ResultMsg deleteUser(SysUserDo sysUserDo) {
         return sysUserService.deleteSysUser(sysUserDo);
     }
 }

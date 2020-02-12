@@ -4,9 +4,6 @@ import com.github.jackieonway.activiti.handler.ServiceException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 
@@ -19,6 +16,13 @@ public class QueryConditionBean implements Serializable {
     private static final long serialVersionUID = -1155142000712944886L;
 
     private static final Integer MAX_PAGE_SIZE = 3000;
+    @ApiModelProperty(value = "当前页")
+    private Integer pageNum;
+    @ApiModelProperty(value = "每页条数")
+    private Integer pageSize;
+    private String orderField;
+    private String orderDirection;
+    private Integer startNum;
 
     public QueryConditionBean() {
     }
@@ -28,15 +32,34 @@ public class QueryConditionBean implements Serializable {
         this.pageSize = pageSize;
     }
 
-    @ApiModelProperty(value = "当前页")
-    private Integer pageNum;
+    /**
+     * 业务参数校验，分页查询之前必须校验
+     *
+     * @return
+     */
+    public static void validate(QueryConditionBean queryConditionBean) {
+        if (queryConditionBean == null) {
+            throw new ServiceException("queryConditionBean不能为空");
+        }
+        if (queryConditionBean.getPageNum() == null || queryConditionBean.getPageSize() == null) {
+            throw new ServiceException("pageSize/pageNum参数不能为空");
+        }
+        if (queryConditionBean.getPageNum() <= 0) {
+            throw new ServiceException("pageNum值须大于0");
+        }
+        if (queryConditionBean.getPageSize() > MAX_PAGE_SIZE || queryConditionBean.getPageSize() < 1) {
+            throw new ServiceException("pageSize大小允许范围[1," + MAX_PAGE_SIZE + "]");
+        }
+    }
 
-    @ApiModelProperty(value = "每页条数")
-    private Integer pageSize;
-
-    private String orderField;
-
-    private String orderDirection;
+    public static void validate(QueryConditionBean queryConditionBean, int totalCount) {
+        validate(queryConditionBean);
+        int pageSize = queryConditionBean.getPageSize();
+        int pageNum = queryConditionBean.getPageNum();
+        if (pageNum * pageSize - totalCount > pageSize) {
+            throw new ServiceException("pageNum值超出了查询页数限制");
+        }
+    }
 
     public Integer getStartNum() {
         if (null == pageNum || pageSize == null) {
@@ -48,8 +71,6 @@ public class QueryConditionBean implements Serializable {
     public void setStartNum(Integer startNum) {
         this.startNum = startNum;
     }
-
-    private Integer startNum;
 
     public Integer getPageNum() {
         return pageNum;
@@ -88,35 +109,6 @@ public class QueryConditionBean implements Serializable {
             return null;
         }
         return (pageNum - 1) * pageSize;
-    }
-
-    /**
-     * 业务参数校验，分页查询之前必须校验
-     *
-     * @return
-     */
-    public static void validate(QueryConditionBean queryConditionBean) {
-        if (queryConditionBean == null) {
-            throw new ServiceException("queryConditionBean不能为空");
-        }
-        if (queryConditionBean.getPageNum() == null || queryConditionBean.getPageSize() == null) {
-            throw new ServiceException("pageSize/pageNum参数不能为空");
-        }
-        if (queryConditionBean.getPageNum() <= 0) {
-            throw new ServiceException("pageNum值须大于0");
-        }
-        if (queryConditionBean.getPageSize() > MAX_PAGE_SIZE || queryConditionBean.getPageSize() < 1) {
-            throw new ServiceException("pageSize大小允许范围[1," + MAX_PAGE_SIZE + "]");
-        }
-    }
-
-    public static void validate(QueryConditionBean queryConditionBean, int totalCount) {
-        validate(queryConditionBean);
-        int pageSize = queryConditionBean.getPageSize();
-        int pageNum = queryConditionBean.getPageNum();
-        if (pageNum * pageSize - totalCount > pageSize) {
-            throw new ServiceException("pageNum值超出了查询页数限制");
-        }
     }
 
 }
