@@ -134,7 +134,7 @@ public class ActivitiModelController {
         String deployName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
         Deployment deployment = repositoryService.createDeployment()
                 .name(deployName)
-                .addZipInputStream((ZipInputStream) file.getInputStream())
+                .addZipInputStream(new ZipInputStream(file.getInputStream()))
                 .deploy();
         return "流程部署成功: 部署名称为: " + deployName;
     }
