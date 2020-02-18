@@ -19,6 +19,7 @@ import org.activiti.engine.task.TaskQuery;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,7 @@ import java.util.List;
  * @author Jackie
  * @version $id: WorkFlowController.java v 0.1 2020-02-12 11:27 Jackie Exp $$
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/workFlow")
 @Api(value = "用户流程相关接口", tags = "用户相关接口")
@@ -91,5 +93,6 @@ public class WorkFlowController {
     @ApiOperation(value = "查询流程图")
     public void readProcessImg(String processInstanceId, HttpServletResponse response) throws IOException {
         workFlowService.readProcessImg(processInstanceId, response);
+        String s = "tchnicalReview";
     }
 }

@@ -22,10 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -34,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 public class ActivitiModelController {
     private static final Logger log = LoggerFactory.getLogger(ActivitiModelController.class);
@@ -176,7 +174,7 @@ public class ActivitiModelController {
 
     /**
      * 提交任务
-     * http://localhost:8080/runVariabals?processInstanceId=20001&name=giveup,userId&value=false,3&leaveBillId=1
+     * http://localhost:8080/runVariabals?processInstanceId=20001&name=giveup,userId&value=false,3&leaveBillId=1&userId=5
      */
     @GetMapping("/runVariabals")
     @ResponseBody

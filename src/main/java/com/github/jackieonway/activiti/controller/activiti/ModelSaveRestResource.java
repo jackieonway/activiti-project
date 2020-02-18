@@ -39,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author Jackie
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/service")
 public class ModelSaveRestResource implements ModelDataJsonConstants {

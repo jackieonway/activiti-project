@@ -14,6 +14,7 @@ package com.github.jackieonway.activiti.controller.activiti;
 
 import org.activiti.engine.ActivitiException;
 import org.apache.commons.io.IOUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import java.io.InputStream;
 /**
  * @author Jackie
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/service")
 public class StencilsetRestResource {
