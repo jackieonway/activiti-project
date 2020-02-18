@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 @CrossOrigin
 @RestController
@@ -119,6 +121,22 @@ public class ActivitiModelController {
         modelData.setDeploymentId(deployment.getId());
         repositoryService.saveModel(modelData);
         return "SUCCESS";
+    }
+
+    /**
+     * 发布模型为流程定义
+     * http://localhost:8080/deployByZip
+     */
+    @GetMapping("/deployByZip")
+    @ResponseBody
+    public Object deployByZip(MultipartFile file) throws IOException {
+        String originalFilename = file.getOriginalFilename();
+        String deployName = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        Deployment deployment = repositoryService.createDeployment()
+                .name(deployName)
+                .addZipInputStream((ZipInputStream) file.getInputStream())
+                .deploy();
+        return "流程部署成功: 部署名称为: " + deployName;
     }
 
     /**
