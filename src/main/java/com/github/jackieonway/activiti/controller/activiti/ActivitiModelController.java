@@ -127,7 +127,7 @@ public class ActivitiModelController {
      * 发布模型为流程定义
      * http://localhost:8080/deployByZip
      */
-    @GetMapping("/deployByZip")
+    @PostMapping("/deployByZip")
     @ResponseBody
     public Object deployByZip(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
