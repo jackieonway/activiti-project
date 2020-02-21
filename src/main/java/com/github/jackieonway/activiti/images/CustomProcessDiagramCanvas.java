@@ -56,6 +56,27 @@ public class CustomProcessDiagramCanvas extends DefaultProcessDiagramCanvas {
         g.setStroke(originalStroke);
     }
 
+    public void drawHighLight(boolean isStartOrEnd, boolean isPolygon, int x, int y, int width, int height, Color color) {
+        Paint originalPaint = g.getPaint();
+        Stroke originalStroke = g.getStroke();
+
+        g.setPaint(color);
+        g.setStroke(MULTI_INSTANCE_STROKE);
+        if (isStartOrEnd) {// 开始、结束节点画圆
+            g.drawOval(x, y, width, height);
+        } else if (isPolygon) { //网关
+            int[] ypoints = {y + height / 2, y, y + height / 2, y + height};
+            int[] xpoints = {x, x + width / 2, x + width, x + width / 2};
+            Polygon polygon = new Polygon(xpoints, ypoints, 4);
+            g.drawPolygon(polygon);
+        } else {// 非开始、结束节点画圆角矩形
+            RoundRectangle2D rect = new RoundRectangle2D.Double(x, y, width, height, 5, 5);
+            g.draw(rect);
+        }
+        g.setPaint(originalPaint);
+        g.setStroke(originalStroke);
+    }
+
     public void drawSequenceflow(int[] xPoints, int[] yPoints, boolean conditional, boolean isDefault,
                                  boolean highLighted, double scaleFactor, Color color) {
         drawConnection(xPoints, yPoints, conditional, isDefault, "sequenceFlow", AssociationDirection.ONE, highLighted,

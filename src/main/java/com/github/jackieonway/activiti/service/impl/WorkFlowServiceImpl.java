@@ -113,22 +113,6 @@ public class WorkFlowServiceImpl implements WorkFlowService {
                     .findActivity(historicActivityInstances.get(i + 1).getActivityId());
             // 将后面第一个节点放在时间相同节点的集合里
             sameStartTimeNodes.add(sameActivityImpl1);
-            for (int j = i + 1; j < historicActivityInstances.size() - 1; j++) {
-                // 后续第一个节点
-                HistoricActivityInstance activityImpl1 = historicActivityInstances.get(j);
-                // 后续第二个节点
-                HistoricActivityInstance activityImpl2 = historicActivityInstances.get(j + 1);
-                if (Math.abs(activityImpl1.getStartTime().getTime() - activityImpl2.getStartTime().getTime()) < 200) {
-//                    if (activityImpl1.getStartTime().equals(activityImpl2.getStartTime())) {
-                    // 如果第一个节点和第二个节点开始时间相同保存
-                    ActivityImpl sameActivityImpl2 = processDefinitionEntity
-                            .findActivity(activityImpl2.getActivityId());
-                    sameStartTimeNodes.add(sameActivityImpl2);
-                } else {
-                    // 有不相同跳出循环
-                    break;
-                }
-            }
             List<PvmTransition> pvmTransitions = activityImpl.getOutgoingTransitions();// 取出节点的所有出去的线
             for (PvmTransition pvmTransition : pvmTransitions) {
                 // 对所有的线进行遍历

@@ -261,7 +261,7 @@ public class CustomProcessDiagramGenerator extends DefaultProcessDiagramGenerato
                     drawHighLight((flowNode instanceof StartEvent), processDiagramCanvas, bpmnModel.getGraphicInfo(flowNode.getId()), colors[1]);
                 } else {//普通节点
                     drawHighLight((flowNode instanceof StartEvent) || (flowNode instanceof EndEvent),
-                            processDiagramCanvas, bpmnModel.getGraphicInfo(flowNode.getId()), colors[0]);
+                            (flowNode instanceof Gateway), processDiagramCanvas, bpmnModel.getGraphicInfo(flowNode.getId()), colors[0]);
                 }
             }
 
@@ -331,6 +331,10 @@ public class CustomProcessDiagramGenerator extends DefaultProcessDiagramGenerato
 
     private void drawHighLight(boolean isStartOrEnd, CustomProcessDiagramCanvas processDiagramCanvas, GraphicInfo graphicInfo, Color color) {
         processDiagramCanvas.drawHighLight(isStartOrEnd, (int) graphicInfo.getX(), (int) graphicInfo.getY(), (int) graphicInfo.getWidth(), (int) graphicInfo.getHeight(), color);
+    }
+
+    private void drawHighLight(boolean isStartOrEnd, boolean isPolygon, CustomProcessDiagramCanvas processDiagramCanvas, GraphicInfo graphicInfo, Color color) {
+        processDiagramCanvas.drawHighLight(isStartOrEnd, isPolygon, (int) graphicInfo.getX(), (int) graphicInfo.getY(), (int) graphicInfo.getWidth(), (int) graphicInfo.getHeight(), color);
     }
 
     @Override
