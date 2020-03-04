@@ -5,6 +5,7 @@
 package com.github.jackieonway.activiti.controller.workflow;
 
 import com.github.jackieonway.activiti.entity.actentity.ActTaskEntity;
+import com.github.jackieonway.activiti.service.ChangeBpmnService;
 import com.github.jackieonway.activiti.service.WorkFlowService;
 import com.github.jackieonway.activiti.utils.ResponseUtils;
 import com.github.jackieonway.activiti.utils.ResultMsg;
@@ -44,6 +45,9 @@ public class WorkFlowController {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private ChangeBpmnService changeBpmnService;
 
     @Autowired
     private WorkFlowService workFlowService;
@@ -95,4 +99,11 @@ public class WorkFlowController {
         workFlowService.readProcessImg(processInstanceId, response);
         String s = "tchnicalReview";
     }
+
+    @GetMapping("/handle")
+    @ApiOperation(value = "处理数据")
+    public void handle() throws IOException {
+        changeBpmnService.changeBpmnService();
+    }
+
 }
