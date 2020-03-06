@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.jackieonway.activiti.entity.LeaveBillDo;
 import com.github.jackieonway.activiti.service.LeaveBillService;
+import com.github.jackieonway.activiti.service.WorkFlowService;
 import com.github.jackieonway.activiti.utils.ResponseUtils;
 import com.github.jackieonway.activiti.utils.ResultMsg;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
@@ -48,6 +49,9 @@ public class ActivitiModelController {
 
     @Autowired
     private LeaveBillService leaveBillService;
+
+    @Autowired
+    private WorkFlowService workFlowService;
 
     /**
      * 新建一个空模型
@@ -137,6 +141,17 @@ public class ActivitiModelController {
                 .addZipInputStream(new ZipInputStream(file.getInputStream()))
                 .deploy();
         return "流程部署成功: 部署名称为: " + deployName;
+    }
+
+    /**打开任务表单*/
+    @GetMapping("/viewApplyForm")
+    @ResponseBody
+    public void viewApplyForm(String processInstanceId,HttpServletResponse response) throws IOException {
+        //任务ID
+        String taskId = taskService.createTaskQuery().processInstanceId(processInstanceId).singleResult().getId();
+        //获取任务表单中任务节点的url连接
+        String url = workFlowService.findTaskFormKeyByTaskId(taskId);
+        response.sendRedirect(url);
     }
 
     /**

@@ -9,10 +9,8 @@ import com.github.jackieonway.activiti.images.WorkflowConstants;
 import com.github.jackieonway.activiti.service.WorkFlowService;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.engine.HistoryService;
-import org.activiti.engine.ProcessEngineConfiguration;
-import org.activiti.engine.RepositoryService;
-import org.activiti.engine.RuntimeService;
+import org.activiti.engine.*;
+import org.activiti.engine.form.TaskFormData;
 import org.activiti.engine.history.HistoricActivityInstance;
 import org.activiti.engine.history.HistoricProcessInstance;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
@@ -50,6 +48,9 @@ public class WorkFlowServiceImpl implements WorkFlowService {
 
     @Autowired
     private ProcessEngineConfiguration processEngineConfiguration;
+
+    @Autowired
+    private FormService formService;
 
     /**
      * @读取动态流程图
@@ -89,6 +90,15 @@ public class WorkFlowServiceImpl implements WorkFlowService {
         while ((len = imageStream.read(b, 0, 1024)) != -1) {
             response.getOutputStream().write(b, 0, len);
         }
+    }
+
+    /**使用任务id，获取当前任务节点中对应的Form key中的连接的值*/
+    @Override
+    public String findTaskFormKeyByTaskId(String taskId) {
+        TaskFormData formData = formService.getTaskFormData(taskId);
+        //获取Form key的值
+        String url = formData.getFormKey();
+        return url;
     }
 
     /**

@@ -14,4 +14,6 @@ import java.io.IOException;
 public interface WorkFlowService {
 
     void readProcessImg(String processInstanceId, HttpServletResponse response) throws IOException;
+
+    String findTaskFormKeyByTaskId(String taskId);
 }
