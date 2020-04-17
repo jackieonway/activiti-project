@@ -43,10 +43,10 @@ public class ChangeBpmnServiceImpl implements ChangeBpmnService {
     private String rootPath;
     private  static final Map<Integer,String> MODEL_IDS = new HashMap<>();
     static {
-        MODEL_IDS.put(2,"67507");
-        MODEL_IDS.put(3,"67504");
-        MODEL_IDS.put(4,"67501");
-        MODEL_IDS.put(5,"55001");
+        MODEL_IDS.put(2,"1");
+        MODEL_IDS.put(3,"3");
+        MODEL_IDS.put(4,"5");
+        MODEL_IDS.put(5,"7");
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ChangeBpmnServiceImpl implements ChangeBpmnService {
                 byte[] pngBytes = repositoryService.getModelEditorSourceExtra(modelId);
                 ObjectNode objectNode = (ObjectNode)jsonNode;
                 ObjectNode properties = (ObjectNode)jsonNode.get("properties");
-                properties.put("process_id",name);
+                properties.put("process_id","qh_"+name);
                 properties.put("name",taskName);
                 objectNode.set("properties",properties);
                 BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
